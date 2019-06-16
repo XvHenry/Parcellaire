@@ -6,8 +6,8 @@ class Orientation:
 
 
 class Namable:
-    def __init__(self):
-        self.name = ""
+    def __init__(outSelf, inName):
+        outSelf._name = inName
         
         
 class Data:
@@ -20,8 +20,8 @@ class Data:
         ENTREE N/A
         SORTIE outSelf : Data
         """
-        outSelf.lstCultures = []
-        outSelf.lstExploitations = []
+        outSelf._lstCultures = []
+        outSelf._lstExploitations = []
         
 
     def read_cultures(ioSelf, inNomFichierCsv ):
@@ -57,19 +57,19 @@ class Exploitation(Namable):
 
 
 class Culture(Namable):
-    def __init__(self):
-        self.irriguated = False
-        self.récolte = datetime()
+    def __init__(outSelf, inName, inIrriguated, inRecolte):
+        super().__init__(inName)
+        outSelf._irriguated = inIrriguated
+        outSelf._recolte = inRecolte 
         
-        self.parcelle = []
-        self.data = None
+        outSelf._lstParcelles = []
         
 
 class Zone(Namable):
     def __init__(self):
-        self.width = 0.
-        self.height = 0.
-        self.center = None
+        self._width = 0.
+        self._height = 0.
+        self._center = None
         
         
     def area(self):
@@ -85,13 +85,15 @@ class Region(Zone):
 
 
 class Perenne(Culture):
-    def __init__(self):
-        self.durée = 0
+    def __init__(outSelf, inName, inIrriguated, inRecolte, inDuree):
+        super().__init__(inName, inIrriguated, inRecolte)
+        outSelf._duree = inDuree
         
 
 class Annuelle(Culture):
-    def __init__(self):
-        self.semence = datetime()      
+    def __init__(outSelf, inName, inIrriguated, inRecolte, inSemence):
+        super().__init__(inName, inIrriguated, inRecolte)
+        outSelf._semence = inSemence      
 
 
 class Fruitier(Perenne):
