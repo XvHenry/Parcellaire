@@ -30,7 +30,29 @@ class Data:
         ENTREE inNomFichierCsv : str # nom du fichier CSV à traiter
         MAJ    ioSelf : Data
         """
-        return False
+        #1 Lecture du fichier dans la variable lstCultures
+        fichCultures = open(inNomFichierCsv,'r')
+        lstCultures = fichCultures.readlines() # ou lstPoints = list(fichPointsRando)
+        fichCultures.close()
+        #2 Ajout des différents points dans la trace ioSelf
+        #  en sautant la ligne d'en-tête (avec le nom de colonnes)
+        for LigneCulture in lstCultures[1:] : # traiter une ligne de culture
+            lstDatas = LigneCulture.rstrip().split(";") # isoler chaque élément séparé par point-virgule
+            # Culture;Nom;Irriguation;Récolte;Semence;Durée
+            cultureType, nom, irriguation, recolte, semence, duree = lstDatas
+            irriguation = True if irriguation == 'Oui' else False # conversion de str en booléen 
+            #créer une culture en fonction de cultureType
+            if cultureType == 'Annuelle':
+                culture = Annuelle(nom, irriguation, recolte, semence)
+            elif cultureType == 'Perenne':
+                culture = Perenne(nom, irriguation, recolte, duree)
+            else:
+                print(cultureType, ': Culture ignorée')
+                continue 
+
+            ioSelf._lstCultures.append(culture)
+
+        return True
 
 
     def read_exploitations(ioSelf, inNomFichierCsv): # return boolean
@@ -120,3 +142,8 @@ class Cereales(Annuelle):
 
 class Oleagineux(Annuelle):
     pass
+
+
+if __name__ == '__main__': # Test unitaire du fichier Data.py 
+    data = Data()
+    data.read_cultures('Cultures.csv') 
