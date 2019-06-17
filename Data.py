@@ -5,14 +5,21 @@ class Orientation:
 
 
 
-class Namable:
-    def __init__(outSelf, inName):
-        outSelf._name = inName
+class Nommable:
+    def __init__(outSelf, inNom):
+        outSelf._nom = inNom
         
         
+    def nom(inSelf):
+        """
+        FONCTION retourne le nom
+        """
+        return inSelf._nom
+
+
 class Data:
     """
-    Gestion des données provenant des fichers exploitants et culutures
+    Gestion des données provenant des fichers parcelles et cultures
     """
     def __init__(outSelf):        
         """
@@ -20,11 +27,20 @@ class Data:
         ENTREE N/A
         SORTIE outSelf : Data
         """
-        outSelf._lstCultures = []
-        outSelf._lstExploitations = []
+        outSelf._dictCultures = {}
+        outSelf._dictParcelles = {}
         
 
-    def read_cultures(ioSelf, inNomFichierCsv ):
+    def ajouter_culture(ioSelf, inCulture):
+        ioSelf._dictCultures[inCulture.nom()] = inCulture 
+        pass
+
+    
+    def culture_par_nom(inSelf, inNom):
+        return inSelf._dictCultures[inNom]
+
+
+    def lire_fichier_cultures(ioSelf, inNomFichierCsv ):
         """
         ROLE : lit le fichier CSV de nom spécifié dans Data ioSelf
         ENTREE inNomFichierCsv : str # nom du fichier CSV à traiter
@@ -32,15 +48,19 @@ class Data:
         """
         #1 Lecture du fichier dans la variable lstCultures
         fichCultures = open(inNomFichierCsv,'r')
-        lstCultures = fichCultures.readlines() # ou lstPoints = list(fichPointsRando)
+        lstCultures = fichCultures.readlines() # ou lstCultures = list(ficjCultures)
         fichCultures.close()
         #2 Ajout des différents points dans la trace ioSelf
         #  en sautant la ligne d'en-tête (avec le nom de colonnes)
+        if len(lstCultures[0].split(";")) != 6:
+            print(inNomFichierCsv, ': Le fichier doit avoir 6 colonnes')
+            return False
+
         for LigneCulture in lstCultures[1:] : # traiter une ligne de culture
             lstDatas = LigneCulture.rstrip().split(";") # isoler chaque élément séparé par point-virgule
             # Culture;Nom;Irriguation;Récolte;Semence;Durée
             cultureType, nom, irriguation, recolte, semence, duree = lstDatas
-            irriguation = True if irriguation == 'Oui' else False # conversion de str en booléen 
+            irriguation = irriguation == 'Oui' # conversion de str en booléen 
             #créer une culture en fonction de cultureType
             if cultureType == 'Annuelle':
                 culture = Annuelle(nom, irriguation, recolte, semence)
@@ -50,7 +70,7 @@ class Data:
                 print(cultureType, ': Culture ignorée')
                 continue 
 
-            ioSelf._lstCultures.append(culture)
+            ioSelf.ajouter_culture(culture)
 
         return True
 
@@ -90,8 +110,8 @@ class Data:
 
 
 
-class Patch:
-    def __init__(self):
+class Patch(Nommable):
+    """
         
         self.parcelle = []
         
@@ -103,7 +123,7 @@ class Exploitation(Namable):
         outSelf.data = None
 
 
-class Culture(Namable):
+class Culture(Nommable):
     def __init__(outSelf, inName, inIrriguated, inRecolte):
         super().__init__(inName)
         outSelf._irriguated = inIrriguated
@@ -112,7 +132,7 @@ class Culture(Namable):
         outSelf._lstParcelles = []
         
 
-class Zone(Namable):
+class Zone(Nommable):
     """
     ROLE gère les zones géographiques rectangles, calcule l'aire et le périmètre
     """
