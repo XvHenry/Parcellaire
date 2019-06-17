@@ -97,10 +97,10 @@ class Patch:
         
 
 class Exploitation(Namable):
-    def __init__(self):
+    def __init__(outSelf, inIrriguated, inOrientation):
         
-        self.parcelle = []
-        self.data = None
+        outSelf.parcelle = []
+        outSelf.data = None
 
 
 class Culture(Namable):
