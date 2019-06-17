@@ -113,17 +113,36 @@ class Culture(Namable):
         
 
 class Zone(Namable):
-    def __init__(self):
-        self._width = 0.
-        self._height = 0.
-        self._center = None
+    """
+    ROLE gère les zones géographiques rectangles, calcule l'aire et le périmètre
+    """
+    def __init__(outSelf, inName, inWidth, inHeight, inCenter):
+        """
+        ROLE initialise l'objet Zone outself
+        ENTREE  inWidth : float # largeur de la zone en mètre
+                inHeigth : float #hauteur de la parcelle en mètre
+                inCenter : lst #couple contenant les coordonnées du centre
+        MAJ ioself : Zone
+        """
+        super().__init__(inName)
+        outSelf._width = inWidth.
+        outSelf._height = inHeight
+        outSelf._center = inCenter
         
         
-    def area(self):
-        return 0.
+    def area_ha(inSelf):
+        """
+        ROLE renvoie l'aire de la zone en ha
+        ENTREE inSelf : Zone
+        """    
+        L = inSelf._width
+        l = inSelf._height
+        areaMeter = L*l
+        areaHa = areaMeter*0.001 # conversion en mètres
+        return areaHa.
 
 
-    def perimeter(self):
+    def perimeter(inSelf):    
         return 0.
 
 
