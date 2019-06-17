@@ -28,9 +28,10 @@ class Data:
         SORTIE outSelf : Data
         """
         outSelf._dictCultures = {}
-        outSelf._dictParcelles = {}
+        outSelf._dictParcellesNom = {}
+        #outSelf._dictParcellesProp = {}
+        outSelf._dictExploitations = {}
         
-
     def ajouter_culture(ioSelf, inCulture):
         ioSelf._dictCultures[inCulture.nom()] = inCulture 
 
@@ -40,12 +41,20 @@ class Data:
 
 
     def ajouter_parcelle(ioSelf, inParcelle):
-        ioSelf._dictParcelles[inParcelle.nom()] = inParcelle 
+        ioSelf._dictParcellesNom[inParcelle.nom()] = inParcelle 
+        #ioSelf._dictParcellesProp[inParcelle.prop()] = inParcelle
 
     
     def parcelle_par_nom(inSelf, inNom):
-        return inSelf._dictParcelles[inNom]
+        return inSelf._dictParcellesNom[inNom]
 
+
+    def rechercher_exploitation(ioSelf, inNom):
+        exploitation = ioSelf._dictExploitations.get(inNom)
+        if exploitation is None:
+            exploitation = Exploitation(inNom)
+            ioSelf._dictExploitations[inNom] = exploitation
+        return exploitation
 
     def lire_fichier_cultures(ioSelf, inNomFichierCsv ):
         """
@@ -102,16 +111,35 @@ class Data:
         for LigneParcelle in lstParcelles[1:] : # traiter une ligne de parcelle
             lstDatas = LigneParcelle.rstrip().split(";") # isoler chaque élément séparé par point-virgule
             # Nom;Proprietaire;Largeur;Hauteur;Centre;Irriguee;Orientation;Culture en cours
-            name, owner, width, height, center, irriguee, orientation, actualCrop = lstDatas
+            name, proprietaire, width, height, center, irriguee, orientation, actualCrop = lstDatas
             irriguee = irriguee == 'Oui' # conversion de str en booléen 
             actualCrop = ioSelf.culture_par_nom(actualCrop) # Recherche de l'objet culture de même nom
-            parcelle = Parcelle(name, width, height, center, irriguee, orientation, owner, actualCrop)
+            parcelle = Parcelle(name, width, height, center, irriguee, orientation, proprietaire, actualCrop)
             ioSelf.ajouter_parcelle(parcelle)
+
+            exploitation = ioSelf.rechercher_exploitation(proprietaire)
+            exploitation.ajouter_parcelle(parcelle)
+
 
         return True
 
 
+class Exploitation(Nommable):
+    """
+    ROLE définit un ensemble de parcelles appartenant toutes à un même propriétaire.
+    """    
+    def __init__(outSelf, inProprietaire):
+        """
+        PROCEDURE créant une exploitation vide ne contenant aucune parcelle
+        ENTREE inProprietaire : str # Nom de l'exploitation
+        SORTIE outSelf : exploitation
+        """
+        super().__init__(inProprietaire)
+        outSelf._lstParcelles = []
 
+
+    def ajouter_parcelle(ioSelf, inParcelle):
+        ioSelf._lstParcelles.append(inParcelle)        
 
 
 class Patch(Nommable):
@@ -202,36 +230,21 @@ class Prairie(Perenne):
     
 
 class Parcelle(Zone):
-    def __init__(outSelf, inName, inWidth, inHeight, inCenter, inIrriguated, inOrientation, inOwner, ioActualCrop):
+    def __init__(outSelf, inName, inWidth, inHeight, inCenter, inIrriguated, inOrientation, inProp, ioActualCrop):
         super().__init__(inName, inWidth, inHeight, inCenter)
         outSelf._irriguated = inIrriguated
         outSelf._orientation = inOrientation
-        outSelf._owner = inOwner
+        outSelf._prop = inProp
         # mise à jour de l'association Culture-Parcelle (bidirectionnelle)
         outSelf._actualCrop = ioActualCrop
         ioActualCrop.ajouter_parcelle(outSelf)
-        pass
 
 
-class Exploitation(Nommable):
+    def prop(inSelf):
     """
-    ROLE définit un ensemble de parcelles appartenant toutes à un même propriétaire.
+        FONCTION retourne le nom du propriétaire
     """
-    def __init__(outSelf, inName, inOwner):
-        """
-        PROCEDURE créant une exploitation vide ne contenant aucune parcelle
-        ENTREE inName : str # Nom de l'exploitation
-               inOwner :str # Nom du propriétaire
-        SORTIE outSelf : exploitation
-        """
-        super().__init__(inName) # Nom de l'exploitation
-        outSelf._Owner =str(inOwner) # Nom du propriétaire
-        outSelf._lstParcelles = list() # Liste des exploitations 
-
-    
-    def ajouter_parcelles(ioSelf):
-        pass
-
+        return inSelf._prop
         
         
 
