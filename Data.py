@@ -1,8 +1,9 @@
-from datetime import datetime
 
 class Orientation:
     NORTH, SOUTH, EAST, WEST = range(4)
 
+
+LST_MOIS = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
 
 
 class Nommable:
@@ -40,6 +41,13 @@ class Data:
         return inSelf._dictCultures[inNom]
 
 
+    def cultures(inSelf):
+        """
+        FONCTION qui retourne la liste des cultures
+        """
+        return inSelf._dictCultures.values()
+
+
     def ajouter_parcelle(ioSelf, inParcelle):
         ioSelf._dictParcellesNom[inParcelle.nom()] = inParcelle 
         #ioSelf._dictParcellesProp[inParcelle.prop()] = inParcelle
@@ -49,12 +57,15 @@ class Data:
         return inSelf._dictParcellesNom[inNom]
 
 
-    def rechercher_exploitation(ioSelf, inNom):
-        exploitation = ioSelf._dictExploitations.get(inNom)
-        if exploitation is None:
+    def recherche_exploitation(inSelf, inNom):
+        return ioSelf._dictExploitations.get(inNom)
+
+
+    def creer_exploitation(ioSelf, inNom):
             exploitation = Exploitation(inNom)
             ioSelf._dictExploitations[inNom] = exploitation
         return exploitation
+
 
     def lire_fichier_cultures(ioSelf, inNomFichierCsv ):
         """
@@ -111,13 +122,20 @@ class Data:
         for LigneParcelle in lstParcelles[1:] : # traiter une ligne de parcelle
             lstDatas = LigneParcelle.rstrip().split(";") # isoler chaque élément séparé par point-virgule
             # Nom;Proprietaire;Largeur;Hauteur;Centre;Irriguee;Orientation;Culture en cours
-            name, proprietaire, width, height, center, irriguee, orientation, actualCrop = lstDatas
-            irriguee = irriguee == 'Oui' # conversion de str en booléen 
-            actualCrop = ioSelf.culture_par_nom(actualCrop) # Recherche de l'objet culture de même nom
+            name, proprietaire, strWidth, strHeight, center, strIrriguee, orientation, strActualCrop = lstDatas
+            
+            # conversion des données
+            irriguee = strIrriguee == 'Oui' 
+            actualCrop = ioSelf.culture_par_nom(strActualCrop) # Recherche de l'objet culture de même nom
+            width = float(strWidth)
+            height = float(strHeight)
+
             parcelle = Parcelle(name, width, height, center, irriguee, orientation, proprietaire, actualCrop)
             ioSelf.ajouter_parcelle(parcelle)
 
-            exploitation = ioSelf.rechercher_exploitation(proprietaire)
+            exploitation = ioSelf.cherche_exploitation(proprietaire)
+            if exploitation is None:
+                exploitation = ioSelf.creer_exploitation() 
             exploitation.ajouter_parcelle(parcelle)
 
 
@@ -141,18 +159,39 @@ class Exploitation(Nommable):
     def ajouter_parcelle(ioSelf, inParcelle):
         ioSelf._lstParcelles.append(inParcelle)        
 
+    def recupérer_infos_culture(inSelf, ioDictHaParCulture):
+        """
+        ROLE remplit deux dictionaires avec les hectares a récolter respectivement avec une clé culture et mois
+        """
 
-class Patch(Nommable):
+        for parcelle in inSelf._lstParcelles:
+            culture = parcelle.culture()
+            area = parcelle.area_ha()
+            # sommer les surfaces dans les deux dictionnaires
+            ioDictHaParCulture[culture] = ioDictHaParCulture[culture] + area
+
+
+    def recupérer_infos_mois(inSelf, ioDictHaParMois):
     """
+        ROLE remplit deux dictionaires avec les hectares a récolter respectivement avec une clé culture et mois
+        """
+
+        for parcelle in inSelf._lstParcelles:
+            culture = parcelle.culture()
+            area = parcelle.area_ha()
+            # sommer les surfaces dans les deux dictionnaires
+            recolte = culture.recolte()
+            ioDictHaParMois[recolte] = ioDictHaParMois[recolte] + area
         
-        self.parcelle = []
         
 
-class Exploitation(Namable):
-    def __init__(outSelf, inIrriguated, inOrientation):
+
         
-        outSelf.parcelle = []
-        outSelf.data = None
+        
+
+        
+
+
 
 
 class Culture(Nommable):
@@ -163,13 +202,30 @@ class Culture(Nommable):
         
         outSelf._lstParcelles = []
         
+    def irriguee(inSelf):
+        """
+        FONCTION retourne le besoin en irriguation de la culture
+        """
+        return inSelf._irriguated
 
+    def parcelles(inSelf):
+        """
+        FONCTION retourne la liste des parcelles associées
+        """
+        return inSelf._lstParcelles
+    
     def ajouter_parcelle(ioSelf, inParcelle):
         """
         ROLE mise à jour de l'association Culture-Parcelle
         """
         ioSelf._lstParcelles.append(inParcelle)
         
+    def recolte(inSelf):
+        """
+        FONCTION retourne le mois de récolte de la culture
+        """
+        return inSelf._recolte
+
 
 class Zone(Nommable):
     """
@@ -201,14 +257,6 @@ class Zone(Nommable):
         return areaHa
 
 
-    def perimeter(inSelf):    
-        return 0.
-
-
-class Region(Zone):
-    pass
-
-
 class Perenne(Culture):
     def __init__(outSelf, inName, inIrriguated, inRecolte, inDuree):
         super().__init__(inName, inIrriguated, inRecolte)
@@ -221,14 +269,6 @@ class Annuelle(Culture):
         outSelf._semence = inSemence      
 
 
-class Fruitier(Perenne):
-    pass
-
-
-class Prairie(Perenne):
-    pass
-    
-
 class Parcelle(Zone):
     def __init__(outSelf, inName, inWidth, inHeight, inCenter, inIrriguated, inOrientation, inProp, ioActualCrop):
         super().__init__(inName, inWidth, inHeight, inCenter)
@@ -240,13 +280,29 @@ class Parcelle(Zone):
         ioActualCrop.ajouter_parcelle(outSelf)
 
 
+    def irriguee(inSelf):
+        """
+        FONCTION retourne l'accès à l'eau pour la parcelle
+        """
+    
+    
     def prop(inSelf):
     """
         FONCTION retourne le nom du propriétaire
     """
         return inSelf._prop
         
+    def recolte(inSelf):
+        """
+        FONCTION retourne le mois de récolte de la parcelle
+        """
+        return inSelf._actualCrop.recolte()
         
+    def culture(inSelf):
+        """
+        FONCTION retourne la culture de la parcelle
+        """
+        return inSelf._actualCrop
 
 class Cereales(Annuelle):
     pass
