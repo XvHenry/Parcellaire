@@ -22,13 +22,15 @@ def verifier_parcelles(inData):
 if  __name__ == "__main__":
     print(sys.argv)
     data = Data.Data()
-    data.read_cultures('Cultures.csv') 
+    data.lire_fichier_cultures('Cultures.csv') 
+    data.lire_fichier_parcelles('Parcelles.csv')
     
-    parser = argparse.ArgumentParser(description = 'Projet parcellaire')
-    parser.add_argument('-c', '--command', metavar = '<cmd>', help = 'commande', required = True)
-    parser.add_argument('-p', '--parametre', metavar = '<param>', help = 'paramètre de la commande', required = False)
-    options = parser.parse_args()
-    if options.command == 'check':
+    if sys.argv[1] == 'check':
         verifier_parcelles(data)
+    elif sys.argv[1] == 'plan':
+        nom = sys.argv[2]
+        exploitation = data.rechercher_exploitation(nom)
+        dessiner_planing_mois(exploitation)
     else:
         print(options.command, ': commande inconnue')
+
