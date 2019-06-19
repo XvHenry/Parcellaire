@@ -43,7 +43,7 @@ class Data:
 
     def cultures(inSelf):
         """
-        FONCTION qui retourne la liste des cultures
+        FONCTION qui retourne la list des cultures
         """
         return inSelf._dictCultures.values()
 
@@ -58,7 +58,7 @@ class Data:
 
 
     def recherche_exploitation(inSelf, inNom):
-        return ioSelf._dictExploitations.get(inNom)
+        return inSelf._dictExploitations.get(inNom)
 
 
     def creer_exploitation(ioSelf, inNom):
@@ -133,9 +133,9 @@ class Data:
             parcelle = Parcelle(name, width, height, center, irriguee, orientation, proprietaire, actualCrop)
             ioSelf.ajouter_parcelle(parcelle)
 
-            exploitation = ioSelf.cherche_exploitation(proprietaire)
+            exploitation = ioSelf.recherche_exploitation(proprietaire)
             if exploitation is None:
-                exploitation = ioSelf.creer_exploitation() 
+                exploitation = ioSelf.creer_exploitation(proprietaire) 
             exploitation.ajouter_parcelle(parcelle)
 
 
@@ -159,21 +159,47 @@ class Exploitation(Nommable):
     def ajouter_parcelle(ioSelf, inParcelle):
         ioSelf._lstParcelles.append(inParcelle)        
 
+    
+    def cultures(inSelf):
+        """
+        FONCTION retournant la liste des cultures sur l'exploitation
+        """
+        lstCulture = [0]
+        for parcelle in inSelf._lstParcelles:
+            culture = parcelle.culture()
+            existe = False
+
+
+            for cultureClasse in lstCulture:
+                if culture == cultureClasse:
+                    existe = True
+            
+            if existe == False:
+                NOM = culture.nom()
+                lstCulture.append(culture.nom())
+
+            lstCulture.remove(0)
+
+        return lstCulture
+
+
+    
     def recupérer_infos_culture(inSelf, ioDictHaParCulture):
         """
-        ROLE remplit deux dictionaires avec les hectares a récolter respectivement avec une clé culture et mois
+        ROLE remplit un dictionaire avec les hectares a récolter respectivement avec une clé culture 
         """
 
         for parcelle in inSelf._lstParcelles:
             culture = parcelle.culture()
+            nomCulture = culture.nom()
             area = parcelle.area_ha()
-            # sommer les surfaces dans les deux dictionnaires
-            ioDictHaParCulture[culture] = ioDictHaParCulture[culture] + area
+            # sommer les surfaces dans le dictionnaire
+            ioDictHaParCulture[nomCulture] = ioDictHaParCulture[nomCulture] + area
 
 
     def recupérer_infos_mois(inSelf, ioDictHaParMois):
     """
-        ROLE remplit deux dictionaires avec les hectares a récolter respectivement avec une clé culture et mois
+        ROLE remplit un dictionaire avec les hectares a récolter respectivement avec une clé mois
         """
 
         for parcelle in inSelf._lstParcelles:
