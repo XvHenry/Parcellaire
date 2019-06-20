@@ -64,6 +64,54 @@ def dessiner_planing_mois(inExploitation):
     #plt.savefig('SimpleBar.png')
     plt.show()
 
+
+def dessiner_planing_culture(inExploitation):
+    """
+    ROLE dessiner le planing par culture
+    """
+    lstNomCultures = inExploitation.cultures()
+    dictHaParCulture = {}
+    
+    for culture in lstNomCultures:
+        dictHaParCulture[culture] = 0
+    
+    inExploitation.recupérer_infos_culture(dictHaParCulture)
+
+    lstHaParCulture = []
+
+    for culture in lstNomCultures:
+    lstHaParCulture.append(dictHaParCulture[culture])
+    #    lstCultures.append(dictHaParCulture.keys())
+    
+    
+    # tracer le diagramme en bâton
+
+    fig = plt.figure()
+
+    x = []
+    i = 1
+    for culture in lstNomCultures:
+        x.append(i)
+        i = i + 1
+    width = 0.05
+    BarName = ['a','b','c','d','e','f','g','h','i','j']
+
+    plt.bar(x, lstHaParCulture, width, color= 'r')
+    #plt.scatter([i+width/2.0 for i in x],lstHaParCulture,color='k',s=40)
+
+    plt.xlim(0,13)
+    plt.ylim(0,max(lstHaParCulture) + 1)
+    plt.grid()
+
+    plt.ylabel('Ha à récolter')
+    plt.title('Planning de récolte')
+
+    pylab.xticks(x, Data.LST_MOIS, rotation=40)
+
+    #plt.savefig('SimpleBar.png')
+    plt.show()
+
+
 if  __name__ == "__main__":
     print(sys.argv)
     data = Data.Data()
