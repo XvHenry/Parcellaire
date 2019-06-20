@@ -1,3 +1,3 @@
-Nom;Propriétaire;Largeur ;Hauteur;Centre ;Irriguée ;Orientation;Culture en cours
-ZA45;Gerard;120;45;X;Oui;Nord;Ble
-ZA22;Michel;450;32;X;Non;Ouest;Pommes
+Nom;Propriétaire;Largeur ;Hauteur;Irriguée ;Culture en cours
+ZA45;Gerard;120;45;Oui;Ble
+ZA22;Michel;450;32;Non;Pommes
