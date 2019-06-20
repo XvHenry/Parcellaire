@@ -164,7 +164,7 @@ class Exploitation(Nommable):
         """
         FONCTION retournant la liste des cultures sur l'exploitation
         """
-        lstCulture = [0]
+        lstCulture = []
         for parcelle in inSelf._lstParcelles:
             culture = parcelle.culture()
             existe = False
@@ -178,7 +178,6 @@ class Exploitation(Nommable):
                 NOM = culture.nom()
                 lstCulture.append(culture.nom())
 
-            lstCulture.remove(0)
 
         return lstCulture
 
