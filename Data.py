@@ -372,8 +372,8 @@ class Parcelle(Zone):
         super().__init__(inName, inLongueur, inLargeur,)
         outSelf._irriguee = inIrriguee # initialisation de l'attribut _irriguee
         outSelf._prop = inProp # initialisation de l'attribut _prop
+        outSelf._cultureActuelle = ioCultureActuelle #initialisation de l'attribut _culture actuelle
         # mise à jour de l'association Culture-Parcelle (bidirectionnelle)
-        outSelf._actualCrop = ioCultureActuelle 
         ioCultureActuelle.ajouter_parcelle(outSelf)
 
 
@@ -388,14 +388,14 @@ class Parcelle(Zone):
         """
         FONCTION retourne le mois de récolte de la parcelle
         """
-        return inSelf._actualCrop.recolte()
+        return inSelf._cultureActuelle.recolte()
 
  
     def culture(inSelf):
         """
         FONCTION retourne la culture de la parcelle
         """
-        return inSelf._actualCrop
+        return inSelf._cultureActuelle
 
 
 if __name__ == '__main__': # Test unitaire du fichier Data.py 
