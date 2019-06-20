@@ -20,26 +20,23 @@ def verifier_parcelles(inData):
         print(nombreErreurs, "problème(s) ont été rencontré(s)")
 
 
-def dessiner_planning():
-    pass
+def dessiner_planning(inExploistation):
+    dessiner_planing_culture(inExploistation)
+    dessiner_planing_mois(inExploistation)
 
 def dessiner_planing_mois(inExploitation):
     """
     ROLE dessiner le planing par mois
     """
     dictHaParMois = {}
-    lstHaParMois = []
     for mois in Data.LST_MOIS:
         dictHaParMois[mois] = 0
-        lstHaParMois.append(0)
-    
-    i = 0
     
     inExploitation.recupérer_infos_mois(dictHaParMois)    
     
+    lstHaParMois = []
     for mois in Data.LST_MOIS:
-        lstHaParMois[i] = dictHaParMois[mois]
-        i = i + 1
+        lstHaParMois.append(dictHaParMois[mois])        i = i + 1
     
     # tracer le diagramme en bâton
 
@@ -50,14 +47,14 @@ def dessiner_planing_mois(inExploitation):
     BarName = ['a','b','c','d','e','f','g','h','i','j']
 
     plt.bar(x, lstHaParMois, width, color= 'r')
-    plt.scatter([i+width/2.0 for i in x],lstHaParMois,color='k',s=40)
+    #plt.scatter([i+width/2.0 for i in x],lstHaParMois,color='k',s=40)
 
     plt.xlim(0,13)
     plt.ylim(0,max(lstHaParMois) + 1)
     plt.grid()
 
     plt.ylabel('Ha à récolter')
-    plt.title('Planning de récolte')
+    plt.title('Planning de récolte par mois')
 
     pylab.xticks(x, Data.LST_MOIS, rotation=40)
 
@@ -93,18 +90,19 @@ def dessiner_planing_culture(inExploitation):
     for culture in lstNomCultures:
         x.append(i)
         i = i + 1
+    
     width = 0.05
     BarName = ['a','b','c','d','e','f','g','h','i','j']
 
     plt.bar(x, lstHaParCulture, width, color= 'r')
     #plt.scatter([i+width/2.0 for i in x],lstHaParCulture,color='k',s=40)
 
-    plt.xlim(0,13)
+    plt.xlim(0,len(lstNomCultures) + 1)
     plt.ylim(0,max(lstHaParCulture) + 1)
     plt.grid()
 
     plt.ylabel('Ha à récolter')
-    plt.title('Planning de récolte')
+    plt.title('Planning de récolte par culture')
 
     pylab.xticks(x, Data.LST_MOIS, rotation=40)
 
