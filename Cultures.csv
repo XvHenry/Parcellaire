@@ -1,4 +1,7 @@
 Culture;Nom;Irriguation;Recolte;Semence;Duree
 Annuelle;Ble;Non;Juin;Decembre;
 Perenne;Pommes;Oui;Septembre;;15
+Annuelle;Tournesol;Oui;Aout;Mars;
+Perenne;Poires;Non;Octobre;;20
+Perenne;Vignes;Non;Novembre;;10
 Cailloux;;;;;

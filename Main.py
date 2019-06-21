@@ -30,13 +30,13 @@ def dessiner_planing_mois(inExploitation):
     """
     dictHaParMois = {}
     for mois in Data.LST_MOIS:
-        dictHaParMois[mois] = 0
+        dictHaParMois[mois] = 0    
     
-    inExploitation.recupérer_infos_mois(dictHaParMois)    
+    inExploitation.recuperer_infos_mois(dictHaParMois)    
     
     lstHaParMois = []
     for mois in Data.LST_MOIS:
-        lstHaParMois.append(dictHaParMois[mois])        i = i + 1
+        lstHaParMois.append(dictHaParMois[mois])        
     
     # tracer le diagramme en bâton
 
@@ -72,13 +72,13 @@ def dessiner_planing_culture(inExploitation):
     for culture in lstNomCultures:
         dictHaParCulture[culture] = 0
     
-    inExploitation.recupérer_infos_culture(dictHaParCulture)
+    inExploitation.recuperer_infos_culture(dictHaParCulture)
 
     lstHaParCulture = []
 
     for culture in lstNomCultures:
-    lstHaParCulture.append(dictHaParCulture[culture])
-    #    lstCultures.append(dictHaParCulture.keys())
+        lstHaParCulture.append(dictHaParCulture[culture])
+        #    lstCultures.append(dictHaParCulture.keys())
     
     
     # tracer le diagramme en bâton
@@ -107,9 +107,30 @@ def dessiner_planing_culture(inExploitation):
     pylab.xticks(x, Data.LST_MOIS, rotation=40)
 
     #plt.savefig('SimpleBar.png')
-    plt.show()
+    plt.show()  
 
+# programme principal
 
+data = Data.Data()
+data.lire_fichier_cultures('Cultures.csv') 
+data.lire_fichier_parcelles('Parcelles.csv')
+
+# vérification automatique des cultures
+
+verifier_parcelles(data)
+
+# visualisation du planning d'un exploitant
+# pour tester le programme possibilité d'utiliser 'Michel'
+
+nom = input(" Rentrez le nom de l'exploitant : ")
+nom = str(nom)
+
+exploitation = data.recherche_exploitation(nom)
+dessiner_planning(exploitation)
+ 
+
+# ci dessous test unitaire utilisé pendant le devellopement de l'outil
+"""
 if  __name__ == "__main__":
     print(sys.argv)
     data = Data.Data()
@@ -120,8 +141,9 @@ if  __name__ == "__main__":
         verifier_parcelles(data)
     elif sys.argv[1] == 'plan':
         nom = sys.argv[2]
-        exploitation = data.rechercher_exploitation(nom)
+        exploitation = data.recherche_exploitation(nom)
         dessiner_planing_mois(exploitation)
     else:
         print(options.command, ': commande inconnue')
+"""
 

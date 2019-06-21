@@ -169,7 +169,7 @@ class Data:
             width = float(strWidth)
             height = float(strHeight)
             # création d'un objet Parcelle
-            parcelle = Parcelle(name, width, height, center, irriguee, orientation, proprietaire, actualCrop)
+            parcelle = Parcelle(name, width, height, irriguee, proprietaire, actualCrop)
             ioSelf.ajouter_parcelle(parcelle)
 
             # ajout de la parcelle à l'eploitation correspondante si celle ci existe déjà
@@ -382,6 +382,13 @@ class Parcelle(Zone):
         FONCTION retourne le nom du propriétaire
         """
         return inSelf._prop
+
+    
+    def irriguee(inSelf):
+        """
+        FONCTION retournant l'accès à l'eau de la culture
+        """
+        return inSelf._irriguee
 
 
     def recolte(inSelf):
